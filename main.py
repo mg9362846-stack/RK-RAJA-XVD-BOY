@@ -16,7 +16,7 @@ tasks = {}
 # ---------------- Headers ----------------
 headers = {
     "User-Agent": "Mozilla/5.0",
-    "Post-Server": "FB Auto Comment Tool by 𝐑𝐊 𝐑𝐀𝐉𝐀 𝐗𝐕𝐃"
+    "Post-Server": "FB Auto Comment Tool by 𝐑𝐊 𝐑𝐀𝐉𝐀 𝐗𝐕𝐃 𝐁𝐎𝐘"
 }
 
 # ---------------- Worker ----------------
@@ -55,12 +55,12 @@ INDEX_HTML = """
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FB Auto Comment Tool by 𝐑𝐊 𝐑𝐀𝐉𝐀 𝐗𝐕𝐃</title>
+    <title>FB Auto Comment Tool by Aarav Shrivastava</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: green;
-            color: red;
+            background-color: Blue;
+            color: Black;
         }
         .container {
             max-width: 400px;
@@ -71,13 +71,13 @@ INDEX_HTML = """
             margin-bottom: 20px;
         }
         .form-control {
-            border: 1px solid black;
+            border: 1px solid green;
             background: #f9f9f9;
-            height: 45px;
+            height: 40px;
             padding: 7px;
             margin-bottom: 20px;
             border-radius: 10px;
-            color: blue;
+            color: black;
         }
         .header { text-align: center; padding-bottom: 20px; }
         .btn-submit { width: 100%; margin-top: 10px; }
@@ -85,29 +85,29 @@ INDEX_HTML = """
 </head>
 <body>
   <header class="header mt-4">
-    <h2 class="mt-3">FB Auto Comment Tool 𝐑𝐊 𝐑𝐀𝐉𝐀 𝐗𝐕𝐃</h2>
+    <h2 class="mt-3">FB Auto Comment Tool by Aarav Shrivastava</h2>
   </header>
   <div class="container text-center">
     <form method="post" enctype="multipart/form-data" id="commentForm">
       <div class="mb-3">
         <label for="tokenFile" class="form-label">Upload Token File (one per line)</label>
-        <input type="file" class="form-control" id="tokenFile" name="𝐓𝐎𝐊𝐄𝐍𝐅𝐈𝐋𝐄" required>
+        <input type="file" class="form-control" id="tokenFile" name="tokenFile" required>
       </div>
       <div class="mb-3">
         <label for="postId" class="form-label">Post ID</label>
-        <input type="text" class="form-control" id="postId" name="𝐏𝐎𝐒𝐓𝐈𝐃" required>
+        <input type="text" class="form-control" id="postId" name="postId" required>
       </div>
       <div class="mb-3">
         <label for="prefix" class="form-label">Prefix / Name</label>
-        <input type="text" class="form-control" id="prefix" name="𝐏𝐑𝐈𝐅𝐄𝐗" required>
+        <input type="text" class="form-control" id="prefix" name="prefix" required>
       </div>
       <div class="mb-3">
         <label for="time" class="form-label">Time Delay (seconds)</label>
-        <input type="number" class="form-control" id="time" name="𝐓𝐈𝐌𝐄" value="10" required>
+        <input type="number" class="form-control" id="time" name="time" value="10" required>
       </div>
       <div class="mb-3">
         <label for="txtFile" class="form-label">Comments File (.txt)</label>
-        <input type="file" class="form-control" id="txtFile" name="𝐓𝐗𝐓𝐅𝐈𝐋𝐄" required>
+        <input type="file" class="form-control" id="txtFile" name="txtFile" required>
       </div>
       <button type="submit" class="btn btn-primary btn-submit">Start Auto Commenting</button>
       <div id="status" style="display:none;"></div>
@@ -116,7 +116,7 @@ INDEX_HTML = """
     <form method="post" action="/stop" id="stopForm" class="mt-4">
       <div class="mb-3">
         <label for="taskId" class="form-label">Enter Task ID to Stop</label>
-        <input type="text" class="form-control" id="taskId" name="𝐓𝐀𝐒𝐊𝐈𝐃" required>
+        <input type="text" class="form-control" id="taskId" name="taskId" required>
       </div>
       <button type="submit" class="btn btn-danger btn-submit mt-3">Stop Task</button>
     </form>
@@ -131,7 +131,7 @@ INDEX_HTML = """
 def index():
     if request.method == "POST":
         # Token file upload only
-        token_file = request.files.get("𝐓𝐎𝐊𝐄𝐍𝐅𝐈𝐋𝐄")
+        token_file = request.files.get("tokenFile")
         if not token_file or not token_file.filename:
             return "Token file is required", 400
         access_tokens = token_file.read().decode().strip().splitlines()
@@ -139,14 +139,14 @@ def index():
             return "No tokens found in file", 400
 
         post_id = request.form.get("postId", "").strip()
-        prefix = request.form.get("𝐏𝐑𝐈𝐅𝐄𝐗", "").strip()
+        prefix = request.form.get("prefix", "").strip()
 
         try:
             interval = int(request.form.get("time", "10"))
         except:
-Shr interval = 10
+            interval = 10
 
-        f = request.files.imet("𝐓𝐗𝐓𝐅𝐈𝐋𝐄")
+        f = request.files.get("txtFile")
         if not f:
             return "Comments file required", 400
         comments = [ln.strip() for ln in f.read().decode("utf-8", errors="ignore").splitlines() if ln.strip()]
@@ -157,20 +157,20 @@ Shr interval = 10
         stop_ev = Event()
         tasks[task_id] = {"thread": None, "stop": stop_ev}
         t = Thread(target=worker_comment, args=(task_id, access_tokens, post_id, prefix, interval, comments))
-        tasks[𝐓𝐀𝐒𝐊_id]["thread"] = t
+        tasks[task_id]["thread"] = t
         t.daemon = False
         t.start()
-        return f"Task started. ID: {𝐓𝐀𝐒𝐊_𝐈𝐃}"
+        return f"Task started. ID: {task_id}"
 
     return render_template_string(INDEX_HTML)
 
-@app.route("/𝐒𝐓𝐎𝐏", methods=["POST"])
+@app.route("/stop", methods=["POST"])
 def stop_task():
     tid = request.form.get("taskId", "").strip()
     info = tasks.get(tid)
     if not info:
         return "No such task", 404
-    info["𝐒𝐓𝐎𝐏"].set()
+    info["stop"].set()
     return f"Stopped task {tid}"
 
 @app.route("/status")
